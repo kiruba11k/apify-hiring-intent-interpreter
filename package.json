@@ -1,0 +1,30 @@
+{
+    "name": "hiring-intent-interpreter",
+    "version": "1.0.0",
+    "description": "Converts job postings into B2B technology buying intent signals using AI analysis",
+    "type": "module",
+    "main": "src/main.js",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "scripts": {
+        "start": "node src/main.js",
+        "test": "node tests/test.js"
+    },
+    "dependencies": {
+        "@anthropic-ai/sdk": "^0.27.0",
+        "apify": "^3.2.2"
+    },
+    "devDependencies": {
+        "dotenv": "^16.4.5"
+    },
+    "keywords": [
+        "apify",
+        "actor",
+        "hiring-intent",
+        "b2b-intelligence",
+        "sales-intelligence",
+        "intent-data",
+        "job-scraping"
+    ]
+}
