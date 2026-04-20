@@ -1,6 +1,6 @@
 /**
  * Local test runner — run with: node tests/test.js
- * Requires ANTHROPIC_API_KEY in environment or .env file
+ * Requires GROQ_API_KEY in environment or .env file
  */
 
 import 'dotenv/config';

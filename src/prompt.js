@@ -1,5 +1,5 @@
 /**
- * Builds the user-turn prompt sent to Claude.
+ * Builds the user-turn prompt sent to the LLM.
  * Keeps it structured so the model can focus on analysis.
  */
 export function buildPrompt({ job_title, job_description, company_name, historical_job_count }) {
