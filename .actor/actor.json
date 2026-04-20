@@ -2,7 +2,7 @@
     "actorSpecification": 1,
     "name": "hiring-intent-interpreter",
     "title": "Hiring Intent Interpreter",
-    "description": "Converts job postings into structured B2B technology buying intent signals. Classifies companies by tech category (ERP, Cloud, Data, Security, QA, AI), intent type, and intent score.",
+    "description": "Converts job postings into structured B2B technology buying intent signals.",
     "version": "1.0.0",
     "buildTag": "latest",
     "dockerfile": "./Dockerfile",
@@ -23,11 +23,7 @@
                             "intent_type",
                             "intent_score",
                             "intent_strength",
-                            "reasoning",
-                            "signals",
-                            "boost_applied",
-                            "historical_job_count",
-                            "interpreted_at"
+                            "reasoning"
                         ]
                     },
                     "display": {
@@ -35,9 +31,9 @@
                         "properties": {
                             "company_name": { "label": "Company" },
                             "job_title": { "label": "Job Title" },
-                            "intent_categories": { "label": "Categories", "format": "array" },
+                            "intent_categories": { "label": "Categories" },
                             "intent_type": { "label": "Intent Type" },
-                            "intent_score": { "label": "Score (0-100)", "format": "number" },
+                            "intent_score": { "label": "Score", "format": "number" },
                             "intent_strength": { "label": "Strength" },
                             "reasoning": { "label": "Reasoning" }
                         }
