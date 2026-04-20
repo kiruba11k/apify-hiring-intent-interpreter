@@ -1,0 +1,51 @@
+{
+    "title": "Hiring Intent Interpreter Input",
+    "description": "Provide a single job or a batch of jobs to analyze for technology buying intent signals.",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "job_title": {
+            "title": "Job Title",
+            "type": "string",
+            "description": "The title of the job posting (used for single-job mode)",
+            "editor": "textfield",
+            "example": "Senior SAP FICO Consultant"
+        },
+        "job_description": {
+            "title": "Job Description",
+            "type": "string",
+            "description": "Full text of the job description (used for single-job mode)",
+            "editor": "textarea",
+            "example": "We are looking for an experienced SAP FICO consultant to lead our S/4HANA migration..."
+        },
+        "company_name": {
+            "title": "Company Name",
+            "type": "string",
+            "description": "Name of the hiring company (used for single-job mode)",
+            "editor": "textfield",
+            "example": "Acme Corp"
+        },
+        "historical_job_count": {
+            "title": "Historical Job Count",
+            "type": "integer",
+            "description": "Number of similar roles this company has posted historically (boosts intent score for repeated hiring)",
+            "editor": "number",
+            "default": 1,
+            "minimum": 1
+        },
+        "jobs": {
+            "title": "Batch Jobs",
+            "type": "array",
+            "description": "Array of job objects for batch processing. Each object should have: job_title, job_description, company_name, historical_job_count",
+            "editor": "json",
+            "example": [
+                {
+                    "job_title": "Cloud Infrastructure Engineer",
+                    "job_description": "Lead AWS migration of our on-premise data centers...",
+                    "company_name": "TechCorp",
+                    "historical_job_count": 4
+                }
+            ]
+        }
+    }
+}
