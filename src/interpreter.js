@@ -1,12 +1,7 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { log } from './logger.js';
 import { buildPrompt } from './prompt.js';
 import { parseAndValidateOutput } from './parser.js';
 import { applyBoostRules } from './scoring.js';
-
-const client = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
-});
 
 /**
  * Main interpretation function.
@@ -23,19 +18,40 @@ export async function interpretHiringIntent(job) {
     // ── 1. Build the LLM prompt ──────────────────────────────────────────────
     const prompt = buildPrompt({ job_title, job_description, company_name, historical_job_count });
 
-    // ── 2. Call Claude ────────────────────────────────────────────────────────
+    // ── 2. Call Groq model ───────────────────────────────────────────────────
+    const groqApiKey = process.env.GROQ_API_KEY;
+    if (!groqApiKey) {
+        throw new Error('Missing GROQ_API_KEY environment variable');
+    }
+
     let rawContent;
     try {
-        const response = await client.messages.create({
-            model: 'claude-opus-4-5',
-            max_tokens: 1024,
-            temperature: 0,          // deterministic output
-            system: SYSTEM_PROMPT,
-            messages: [{ role: 'user', content: prompt }],
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${groqApiKey}`,
+            },
+            body: JSON.stringify({
+                model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+                max_tokens: 1024,
+                temperature: 0,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'user', content: prompt },
+                ],
+            }),
         });
-        rawContent = response.content[0]?.text || '';
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errText}`);
+        }
+
+        const data = await response.json();
+        rawContent = data.choices?.[0]?.message?.content || '';
     } catch (err) {
-        throw new Error(`Claude API call failed: ${err.message}`);
+        throw new Error(`Groq API call failed: ${err.message}`);
     }
 
     log.debug('Raw LLM output', { rawContent });
