@@ -1,4 +1,5 @@
 {
+    "actorSpecification": 1,
     "name": "hiring-intent-interpreter",
     "title": "Hiring Intent Interpreter",
     "description": "Converts job postings into structured B2B technology buying intent signals. Classifies companies by tech category (ERP, Cloud, Data, Security, QA, AI), intent type, and intent score.",
@@ -9,7 +10,6 @@
     "input": "./input_schema.json",
     "storages": {
         "dataset": {
-            "actorSpecification": 1,
             "title": "Intent Signals",
             "description": "One record per job posting with intent classification and score",
             "views": {
