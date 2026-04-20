@@ -1,0 +1,33 @@
+{
+    "actorSpecification": 1,
+    "title": "Intent Signals",
+    "description": "One record per job posting with intent classification and score",
+    "views": {
+        "overview": {
+            "title": "Intent Overview",
+            "transformation": {
+                "fields": [
+                    "company_name",
+                    "job_title",
+                    "intent_categories",
+                    "intent_type",
+                    "intent_score",
+                    "intent_strength",
+                    "reasoning"
+                ]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "company_name": { "label": "Company" },
+                    "job_title": { "label": "Job Title" },
+                    "intent_categories": { "label": "Categories" },
+                    "intent_type": { "label": "Intent Type" },
+                    "intent_score": { "label": "Score", "format": "number" },
+                    "intent_strength": { "label": "Strength" },
+                    "reasoning": { "label": "Reasoning" }
+                }
+            }
+        }
+    }
+}
