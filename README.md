@@ -1,8 +1,6 @@
-# Hiring Intent Interpreter (Apify Actor)
+# Hiring Intent Interpreter
 
 This Actor analyzes job postings and converts them into structured B2B technology buying-intent signals.
-
-It is designed for use on Apify, where you provide job data as Actor input and receive normalized intent records in the default dataset.
 
 ## What this Actor does
 
@@ -122,40 +120,6 @@ Using the sample you provided, one interpreted record looks like:
   "interpreted_at": "2026-04-22T10:20:45.619Z"
 }
 ```
-
-## Apify setup
-
-Set this as an Actor secret/environment variable:
-
-- `GROQ_API_KEY` (required)
-
-Optional:
-
-- `GROQ_MODEL` (default: `llama-3.3-70b-versatile`)
-- `LOG_LEVEL=DEBUG` (to enable debug logging)
-
-## How to run locally
-
-```bash
-npm install
-npm start
-```
-
-For local runs, you can pass input through Apify local input conventions (for example, `INPUT.json` when using Apify tooling).
-
-## Apify run behavior
-
-- Invalid job records are skipped and written to dataset with `skipped: true` and validation error details.
-- Per-job model failures are captured and written to dataset with `failed: true`.
-- A small delay is used between jobs to reduce API pressure.
-- A summary object is saved to key-value store under `SUMMARY` with:
-  - total processed
-  - high/medium/low intent counts
-  - top intent domains
-  - top intent subtypes
-  - role criticality breakdown
-  - UK job count
-  - average intent score
 
 ## Notes
 
