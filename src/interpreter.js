@@ -13,6 +13,8 @@ export async function interpretHiringIntent(job) {
         job_description,
         company_name,
         historical_job_count = 1,
+        location_country = null,
+        location_city = null,
     } = job;
 
     // ── 1. Build the LLM prompt ──────────────────────────────────────────────
@@ -66,13 +68,18 @@ export async function interpretHiringIntent(job) {
     return {
         company_name,
         job_title,
-        intent_categories: boosted.intent_categories,
+        location_country: location_country || null,
+        location_city: location_city || null,
+        intent_domain: boosted.intent_domain,         // e.g. "AI" | "ERP" | "Cloud" | "Data" | "Security" | "QA"
+        intent_subtype: boosted.intent_subtype,       // e.g. "SAP" | "NLP" | "AWS" | "Snowflake"
         intent_type: boosted.intent_type,
         intent_score: boosted.intent_score,
         intent_strength: scoreToStrength(boosted.intent_score),
+        tech_stack_structured: boosted.tech_stack_structured || [],  // standardized tag array
+        primary_tools: boosted.primary_tools || [],                  // top 2-3 tools
+        role_criticality: boosted.role_criticality || 'Supporting',  // "Core" | "Supporting" | "Peripheral"
         reasoning: boosted.reasoning,
         signals: boosted.signals || [],
-        boost_applied: boosted.boost_applied || [],
         historical_job_count,
         interpreted_at: new Date().toISOString(),
     };
@@ -89,7 +96,7 @@ const SYSTEM_PROMPT = `You are an expert B2B sales intelligence analyst speciali
 
 Your task is to analyze a job posting and extract structured buying-intent signals that indicate a company's technology investment priorities.
 
-CATEGORIES (only return applicable ones):
+INTENT DOMAINS (pick the single best-fit domain, or "None"):
 - ERP: SAP, Oracle, NetSuite, Dynamics 365, Workday, Epicor, IFS
 - Cloud: AWS, Azure, GCP, cloud migration, cloud-native, DevOps, Kubernetes, Terraform
 - Data: data warehouse, data lake, Snowflake, dbt, Spark, Databricks, analytics, BI, Tableau, Power BI
@@ -97,11 +104,30 @@ CATEGORIES (only return applicable ones):
 - QA: test automation, Selenium, Cypress, SDET, QA engineering, testing frameworks
 - AI: machine learning, LLM, GenAI, MLOps, NLP, computer vision, AI/ML platform
 
+INTENT SUBTYPE — the most specific technology or methodology within the domain. Examples:
+- ERP domain → SAP S/4HANA | Oracle Fusion | NetSuite | Dynamics 365 | Workday
+- Cloud domain → AWS | Azure | GCP | Kubernetes | Terraform | DevOps
+- Data domain → Snowflake | dbt | Databricks | Power BI | Tableau | Spark
+- Security domain → SIEM | IAM | Zero Trust | SOC | CSPM | Compliance
+- AI domain → NLP | LLM | MLOps | Computer Vision | GenAI
+- QA domain → Selenium | Cypress | SDET | Test Automation
+- If unclear, return the most prominent tool name found in the description.
+
+TECH STACK — extract ALL specific technology names as a clean array of standardized tags (e.g. ["Python", "AWS", "Snowflake", "dbt", "Kubernetes"]). No version numbers. No descriptions. Tags only.
+
+PRIMARY TOOLS — the top 2-3 most strategically important tools from tech_stack (the ones central to the role, not peripheral).
+
+ROLE CRITICALITY:
+- Core: the role IS the technology initiative (e.g. SAP Architect, ML Engineer, Cloud Lead)
+- Supporting: the role supports or enables the initiative (e.g. DevOps Engineer, Data Analyst)
+- Peripheral: technology is incidental to the primary job function (e.g. Sales Manager who uses Salesforce)
+
 INTENT TYPES:
 - Implementation: net-new technology rollout, "build", "launch", "deploy", "greenfield"
 - Migration: moving from legacy/competitor, "migrate", "transition", "replace", "modernize"
 - Optimization: improving existing stack, "optimize", "scale", "enhance", "improve performance"
 - Expansion: growing existing team/capability (use when historical_job_count >= 3)
+- None: no clear technology buying signal
 
 SCORING GUIDE (0–100):
 - Start at 30 (baseline for any tech job)
@@ -115,19 +141,24 @@ SCORING GUIDE (0–100):
 - Cap at 95 maximum
 
 RULES:
-1. Only include categories with clear evidence from the job description
+1. intent_domain must be exactly one value from the domain list above, or "None"
 2. Do NOT hallucinate technology names not present in the text
 3. reasoning must cite specific phrases or keywords from the job description
-4. If the role is clearly generic HR/admin/sales with no tech buying signal, return intent_score: 5 and intent_categories: []
+4. If the role is clearly generic HR/admin/sales with no tech buying signal, return intent_score: 5 and intent_domain: "None"
 5. signals must be a list of exact keywords/phrases extracted from the text
+6. tech_stack_structured must contain only clean tool/technology names (no descriptions)
 
 OUTPUT: Respond ONLY with a valid JSON object. No markdown, no explanation outside JSON.
 
 JSON schema:
 {
-  "intent_categories": ["string"],
+  "intent_domain": "AI|ERP|Cloud|Data|Security|QA|None",
+  "intent_subtype": "string (e.g. SAP S/4HANA, NLP, AWS, Snowflake)",
   "intent_type": "Implementation|Migration|Optimization|Expansion|None",
   "intent_score": 0-100,
+  "tech_stack_structured": ["string"],
+  "primary_tools": ["string"],
+  "role_criticality": "Core|Supporting|Peripheral",
   "reasoning": "string (2-4 sentences citing evidence)",
   "signals": ["exact phrase from job description"]
 }`;
