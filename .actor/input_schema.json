@@ -25,6 +25,20 @@
             "editor": "textfield",
             "example": "Acme Corp"
         },
+        "location_country": {
+            "title": "Location Country",
+            "type": "string",
+            "description": "Country where the job is based (e.g. United Kingdom, United States, Germany). Used for regional filtering.",
+            "editor": "textfield",
+            "example": "United Kingdom"
+        },
+        "location_city": {
+            "title": "Location City",
+            "type": "string",
+            "description": "City where the job is based (e.g. London, Manchester, Berlin). Used for city-level filtering.",
+            "editor": "textfield",
+            "example": "London"
+        },
         "historical_job_count": {
             "title": "Historical Job Count",
             "type": "integer",
@@ -36,14 +50,16 @@
         "jobs": {
             "title": "Batch Jobs",
             "type": "array",
-            "description": "Array of job objects for batch processing. Each object should have: job_title, job_description, company_name, historical_job_count",
+            "description": "Array of job objects for batch processing. Each object should have: job_title, job_description, company_name, historical_job_count, location_country (optional), location_city (optional)",
             "editor": "json",
             "example": [
                 {
                     "job_title": "Cloud Infrastructure Engineer",
                     "job_description": "Lead AWS migration of our on-premise data centers...",
                     "company_name": "TechCorp",
-                    "historical_job_count": 4
+                    "historical_job_count": 4,
+                    "location_country": "United Kingdom",
+                    "location_city": "London"
                 }
             ]
         }
