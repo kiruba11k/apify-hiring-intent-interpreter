@@ -9,7 +9,7 @@ export function validateInput(job) {
         return { valid: false, errors: ['Input must be an object'] };
     }
 
-    // Required fields
+    // ── Required fields ──────────────────────────────────────────────────
     if (!job.job_title || typeof job.job_title !== 'string' || job.job_title.trim().length < 2) {
         errors.push('job_title is required and must be a non-empty string');
     }
@@ -24,11 +24,24 @@ export function validateInput(job) {
         errors.push('company_name is required');
     }
 
-    // Optional field type checks
+    // ── Optional field type checks ───────────────────────────────────────
     if (job.historical_job_count !== undefined) {
         const count = Number(job.historical_job_count);
         if (isNaN(count) || count < 0) {
             errors.push('historical_job_count must be a non-negative number');
+        }
+    }
+
+    // ── Location fields (optional, but must be strings if provided) ──────
+    if (job.location_country !== undefined && job.location_country !== null) {
+        if (typeof job.location_country !== 'string' || job.location_country.trim().length < 1) {
+            errors.push('location_country must be a non-empty string if provided');
+        }
+    }
+
+    if (job.location_city !== undefined && job.location_city !== null) {
+        if (typeof job.location_city !== 'string' || job.location_city.trim().length < 1) {
+            errors.push('location_city must be a non-empty string if provided');
         }
     }
 
